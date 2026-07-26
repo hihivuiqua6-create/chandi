@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>{% block title %}Admin Panel{% endblock %} — Buff Bot</title>
+<style>
+:root{
+  --bg:#0b0f1a;--sidebar:#111827;--card:#1a2235;--card2:#1f2d47;
+  --fg:#e2e8f0;--mut:#64748b;--pri:#6366f1;--pri2:#818cf8;
+  --ok:#10b981;--warn:#f59e0b;--err:#ef4444;--bd:#1e293b;
+  --font:'Inter',system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:var(--bg);color:var(--fg);display:flex;min-height:100vh}
+a{color:var(--pri2);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* Sidebar */
+.sidebar{width:240px;background:var(--sidebar);border-right:1px solid var(--bd);display:flex;flex-direction:column;padding:0;flex-shrink:0;position:fixed;top:0;left:0;height:100vh;overflow-y:auto;z-index:100}
+.sidebar-logo{padding:24px 20px 16px;border-bottom:1px solid var(--bd)}
+.sidebar-logo h1{font-size:18px;font-weight:700;color:var(--fg);letter-spacing:-.3px}
+.sidebar-logo p{font-size:11px;color:var(--mut);margin-top:3px}
+.sidebar-nav{padding:12px 0;flex:1}
+.nav-section{padding:8px 16px 4px;font-size:10px;font-weight:600;color:var(--mut);letter-spacing:.08em;text-transform:uppercase}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 20px;font-size:13.5px;color:var(--mut);cursor:pointer;transition:all .15s;border-left:3px solid transparent}
+.nav-item:hover,.nav-item.active{background:rgba(99,102,241,.1);color:var(--fg);border-left-color:var(--pri)}
+.nav-item.active{font-weight:600;color:var(--pri2)}
+.nav-icon{font-size:16px;width:20px;text-align:center}
+.sidebar-footer{padding:16px 20px;border-top:1px solid var(--bd)}
+.sidebar-footer a{font-size:12px;color:var(--mut)}
+
+/* Main */
+.main{margin-left:240px;flex:1;padding:28px;min-height:100vh}
+.page-header{margin-bottom:24px}
+.page-header h2{font-size:22px;font-weight:700}
+.page-header p{color:var(--mut);font-size:13px;margin-top:4px}
+
+/* Cards */
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:20px;margin-bottom:20px}
+.card h3{font-size:15px;font-weight:600;margin-bottom:14px;color:var(--fg)}
+.card-sm{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:16px}
+
+/* Stats grid */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;margin-bottom:24px}
+.stat-card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:16px 18px}
+.stat-card .label{font-size:11px;color:var(--mut);font-weight:500;text-transform:uppercase;letter-spacing:.05em}
+.stat-card .value{font-size:28px;font-weight:700;color:var(--fg);margin-top:4px;line-height:1}
+.stat-card .icon{font-size:22px;margin-bottom:6px}
+.stat-card.green .value{color:var(--ok)}
+.stat-card.purple .value{color:var(--pri2)}
+.stat-card.yellow .value{color:var(--warn)}
+.stat-card.red .value{color:var(--err)}
+
+/* Forms */
+.form-group{margin-bottom:16px}
+.form-group label{display:block;font-size:12px;font-weight:600;color:var(--mut);margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em}
+.form-group input,.form-group textarea,.form-group select{
+  width:100%;background:#0f1729;color:var(--fg);border:1px solid var(--bd);
+  border-radius:8px;padding:10px 12px;font-size:13.5px;font-family:inherit;
+  transition:border-color .15s;outline:none
+}
+.form-group input:focus,.form-group textarea:focus,.form-group select:focus{border-color:var(--pri)}
+.form-group textarea{resize:vertical;min-height:90px}
+.form-group .hint{font-size:11px;color:var(--mut);margin-top:4px}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-weight:600;transition:all .15s}
+.btn-primary{background:var(--pri);color:#fff}
+.btn-primary:hover{background:var(--pri2)}
+.btn-danger{background:rgba(239,68,68,.15);color:var(--err);border:1px solid rgba(239,68,68,.3)}
+.btn-danger:hover{background:rgba(239,68,68,.25)}
+.btn-success{background:rgba(16,185,129,.15);color:var(--ok);border:1px solid rgba(16,185,129,.3)}
+.btn-success:hover{background:rgba(16,185,129,.25)}
+.btn-ghost{background:transparent;color:var(--mut);border:1px solid var(--bd)}
+.btn-ghost:hover{color:var(--fg);border-color:var(--mut)}
+.btn-sm{padding:5px 10px;font-size:12px}
+
+/* Alerts */
+.alert{padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.alert-ok{background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);color:var(--ok)}
+.alert-err{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:var(--err)}
+.alert-warn{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);color:var(--warn)}
+
+/* Tables */
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead th{text-align:left;padding:9px 12px;font-size:11px;font-weight:600;color:var(--mut);text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--bd)}
+tbody td{padding:11px 12px;border-bottom:1px solid rgba(30,41,59,.7);vertical-align:middle}
+tbody tr:hover td{background:rgba(99,102,241,.04)}
+tbody tr:last-child td{border-bottom:none}
+
+/* Badges */
+.badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600}
+.badge-ok{background:rgba(16,185,129,.15);color:var(--ok)}
+.badge-err{background:rgba(239,68,68,.15);color:var(--err)}
+.badge-warn{background:rgba(245,158,11,.15);color:var(--warn)}
+.badge-info{background:rgba(99,102,241,.15);color:var(--pri2)}
+
+/* Code */
+code{background:#0f1729;padding:2px 6px;border-radius:4px;font-size:12px;color:var(--pri2)}
+
+/* Grid */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:600px){.grid-2{grid-template-columns:1fr}.sidebar{display:none}.main{margin-left:0}}
+</style>
+{% block extra_head %}{% endblock %}
+</head>
+<body>
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <h1>⚡ Buff Bot</h1>
+    <p>Admin Control Panel</p>
+  </div>
+  <div class="sidebar-nav">
+    <div class="nav-section">Tổng quan</div>
+    <a class="nav-item {% if active=='dashboard' %}active{% endif %}" href="/admin">
+      <span class="nav-icon">📊</span> Dashboard
+    </a>
+    <div class="nav-section">Quản lý</div>
+    <a class="nav-item {% if active=='settings' %}active{% endif %}" href="/admin/settings">
+      <span class="nav-icon">⚙️</span> Cài đặt Bot
+    </a>
+    <a class="nav-item {% if active=='groups' %}active{% endif %}" href="/admin/groups">
+      <span class="nav-icon">👥</span> Nhóm bắt buộc
+    </a>
+    <a class="nav-item {% if active=='users' %}active{% endif %}" href="/admin/users">
+      <span class="nav-icon">🧑‍💻</span> Người dùng
+    </a>
+    <div class="nav-section">Công cụ</div>
+    <a class="nav-item {% if active=='broadcast' %}active{% endif %}" href="/admin/broadcast">
+      <span class="nav-icon">📢</span> Broadcast
+    </a>
+    <a class="nav-item {% if active=='logs' %}active{% endif %}" href="/admin/logs">
+      <span class="nav-icon">📋</span> Lịch sử buff
+    </a>
+  </div>
+  <div class="sidebar-footer">
+    <a href="/admin/logout">🚪 Đăng xuất</a>
+  </div>
+</nav>
+<main class="main">
+  {% block content %}{% endblock %}
+</main>
+</body>
+</html>

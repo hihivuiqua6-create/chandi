@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h2>📊 Dashboard</h2>
+  <p>Tổng quan hệ thống Buff Bot</p>
+</div>
+
+<div class="stats-grid">
+  <div class="stat-card purple">
+    <div class="icon">👥</div>
+    <div class="label">Tổng users</div>
+    <div class="value">{{ stats.total_users }}</div>
+  </div>
+  <div class="stat-card green">
+    <div class="icon">🟢</div>
+    <div class="label">Active hôm nay</div>
+    <div class="value">{{ stats.active_today }}</div>
+  </div>
+  <div class="stat-card">
+    <div class="icon">📈</div>
+    <div class="label">Buff hôm nay</div>
+    <div class="value">{{ stats.buffs_today }}</div>
+  </div>
+  <div class="stat-card purple">
+    <div class="icon">🚀</div>
+    <div class="label">Tổng all-time</div>
+    <div class="value">{{ stats.total_buffs }}</div>
+  </div>
+  <div class="stat-card red">
+    <div class="icon">🚫</div>
+    <div class="label">Bị cấm</div>
+    <div class="value">{{ stats.banned_users }}</div>
+  </div>
+  <div class="stat-card">
+    <div class="icon">🔗</div>
+    <div class="label">Nhóm yêu cầu</div>
+    <div class="value">{{ stats.total_groups }}</div>
+  </div>
+</div>
+
+<div class="grid-2">
+  <div class="card">
+    <h3>⚙️ Trạng thái cài đặt</h3>
+    <table>
+      <tbody>
+        <tr><td style="color:var(--mut)">Bot Token</td>
+          <td>{% if settings.bot_token %}<span class="badge badge-ok">✓ Đã cài</span>{% else %}<span class="badge badge-err">Chưa cài</span>{% endif %}</td></tr>
+        <tr><td style="color:var(--mut)">Buff API URL</td>
+          <td>{% if settings.buff_api_url %}<span class="badge badge-ok">✓ Đã cài</span>{% else %}<span class="badge badge-err">Chưa cài</span>{% endif %}</td></tr>
+        <tr><td style="color:var(--mut)">Giới hạn/ngày</td>
+          <td><strong>{{ settings.daily_limit }}</strong> lượt</td></tr>
+        <tr><td style="color:var(--mut)">Admin IDs</td>
+          <td><code>{{ settings.admin_ids or '—' }}</code></td></tr>
+      </tbody>
+    </table>
+    <div style="margin-top:14px">
+      <a href="/admin/settings" class="btn btn-primary btn-sm">⚙️ Vào cài đặt</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>⚡ Thao tác nhanh</h3>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <a href="/admin/broadcast" class="btn btn-primary">📢 Gửi thông báo broadcast</a>
+      <a href="/admin/groups" class="btn btn-ghost">👥 Quản lý nhóm bắt buộc</a>
+      <a href="/admin/users" class="btn btn-ghost">🧑‍💻 Xem danh sách users</a>
+      <a href="/admin/logs" class="btn btn-ghost">📋 Xem lịch sử buff</a>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h3>📋 Lịch sử buff gần nhất</h3>
+  {% if logs %}
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>User</th>
+          <th>Service</th>
+          <th>Lượt buff</th>
+          <th>Trạng thái</th>
+          <th>Thời gian</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for l in logs %}
+        <tr>
+          <td>{{ l.first_name or l.username or l.user_id }}</td>
+          <td>{{ l.service }}</td>
+          <td><strong>+{{ l.amount }}</strong></td>
+          <td>
+            {% if l.status == 'ok' %}
+            <span class="badge badge-ok">✓ OK</span>
+            {% else %}
+            <span class="badge badge-err">✗ {{ l.status }}</span>
+            {% endif %}
+          </td>
+          <td style="color:var(--mut);font-size:12px">{{ l.created_at[:16] }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p style="color:var(--mut);text-align:center;padding:20px">Chưa có lịch sử buff nào.</p>
+  {% endif %}
+</div>
+{% endblock %}
