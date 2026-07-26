@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block title %}Nhóm bắt buộc{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h2>👥 Nhóm bắt buộc</h2>
+  <p>User phải tham gia tất cả nhóm bên dưới mới được buff</p>
+</div>
+
+{% if msg == 'added' %}
+<div class="alert alert-ok">✅ Đã thêm nhóm thành công!</div>
+{% elif msg == 'deleted' %}
+<div class="alert alert-ok">🗑 Đã xóa nhóm!</div>
+{% endif %}
+
+<div class="grid-2">
+  <div class="card">
+    <h3>➕ Thêm nhóm mới</h3>
+    <form method="POST" action="/admin/groups/add">
+      <div class="form-group">
+        <label>Group ID <span style="color:var(--err)">*</span></label>
+        <input type="text" name="group_id" required placeholder="-1001234567890"/>
+        <div class="hint">Chat ID âm của nhóm. Thêm bot vào nhóm rồi dùng @getidsbot để lấy ID.</div>
+      </div>
+      <div class="form-group">
+        <label>Tên nhóm</label>
+        <input type="text" name="group_title" placeholder="Nhóm TikTok VIP"/>
+      </div>
+      <div class="form-group">
+        <label>Username nhóm</label>
+        <input type="text" name="group_username" placeholder="@ten_nhom"/>
+        <div class="hint">Nếu là nhóm public, điền @username</div>
+      </div>
+      <div class="form-group">
+        <label>Link mời tham gia</label>
+        <input type="url" name="group_link" placeholder="https://t.me/+abc123..."/>
+        <div class="hint">Link invite (bắt buộc nếu nhóm private)</div>
+      </div>
+      <button class="btn btn-primary" type="submit">➕ Thêm nhóm</button>
+    </form>
+  </div>
+
+  <div class="card">
+    <h3>📋 Hướng dẫn</h3>
+    <p style="color:var(--mut);font-size:13px;line-height:1.7">
+      <strong style="color:var(--fg)">1.</strong> Thêm bot làm admin nhóm<br>
+      <strong style="color:var(--fg)">2.</strong> Lấy Group ID: thêm @getidsbot vào nhóm, nó tự báo ID<br>
+      <strong style="color:var(--fg)">3.</strong> ID nhóm thường có dạng <code>-100xxxxxxxxxx</code><br>
+      <strong style="color:var(--fg)">4.</strong> Điền link mời để bot gửi cho user khi chưa vào<br><br>
+      <strong style="color:var(--warn)">⚠️ Lưu ý:</strong> Bot phải có quyền admin trong nhóm để check thành viên. Quyền cần: <em>Restrict Members</em>
+    </p>
+  </div>
+</div>
+
+<div class="card">
+  <h3>📋 Danh sách nhóm bắt buộc ({{ groups|length }})</h3>
+  {% if groups %}
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Group ID</th>
+          <th>Tên nhóm</th>
+          <th>Username</th>
+          <th>Link</th>
+          <th>Thao tác</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for g in groups %}
+        <tr>
+          <td style="color:var(--mut)">{{ loop.index }}</td>
+          <td><code>{{ g.group_id }}</code></td>
+          <td>{{ g.group_title or '—' }}</td>
+          <td>{{ g.group_username or '—' }}</td>
+          <td>
+            {% if g.group_link %}
+            <a href="{{ g.group_link }}" target="_blank" style="font-size:12px">🔗 Mở link</a>
+            {% else %}—{% endif %}
+          </td>
+          <td>
+            <form method="POST" action="/admin/groups/delete" style="display:inline">
+              <input type="hidden" name="db_id" value="{{ g.id }}"/>
+              <button class="btn btn-danger btn-sm" type="submit" onclick="return confirm('Xóa nhóm này?')">🗑 Xóa</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div style="text-align:center;padding:32px;color:var(--mut)">
+    <div style="font-size:40px;margin-bottom:10px">👥</div>
+    <p>Chưa có nhóm nào. Thêm nhóm để bắt buộc user tham gia trước khi buff.</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Lịch sử Buff{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h2>📋 Lịch sử buff</h2>
+  <p>200 bản ghi gần nhất</p>
+</div>
+
+<div class="card">
+  {% if logs %}
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>User</th>
+          <th>Service</th>
+          <th>URL</th>
+          <th>Lượt</th>
+          <th>Kết quả</th>
+          <th>Thời gian</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for l in logs %}
+        <tr>
+          <td style="color:var(--mut)">{{ loop.index }}</td>
+          <td>
+            <div>{{ l.first_name or l.username or '—' }}</div>
+            <div style="font-size:11px;color:var(--mut)"><code>{{ l.user_id }}</code></div>
+          </td>
+          <td><span class="badge badge-info">{{ l.service or '—' }}</span></td>
+          <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px">
+            <a href="{{ l.tiktok_url }}" target="_blank" title="{{ l.tiktok_url }}">{{ l.tiktok_url[:40] }}…</a>
+          </td>
+          <td><strong>+{{ l.amount }}</strong></td>
+          <td>
+            {% if l.status == 'ok' %}
+            <span class="badge badge-ok">✓ OK</span>
+            {% elif l.status == 'fail' %}
+            <span class="badge badge-err">✗ Fail</span>
+            {% else %}
+            <span class="badge badge-warn">⚠ {{ l.status }}</span>
+            {% endif %}
+          </td>
+          <td style="color:var(--mut);font-size:12px">{{ l.created_at[:16] }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div style="text-align:center;padding:40px;color:var(--mut)">
+    <div style="font-size:48px;margin-bottom:12px">📋</div>
+    <p>Chưa có lịch sử buff nào.</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

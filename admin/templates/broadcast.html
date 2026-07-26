@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}Broadcast{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h2>📢 Broadcast thông báo</h2>
+  <p>Gửi tin nhắn tới tất cả users đang dùng bot</p>
+</div>
+
+{% if raw_msg == 'empty' %}
+<div class="alert alert-err">❌ Tin nhắn không được để trống!</div>
+{% elif raw_msg == 'notoken' %}
+<div class="alert alert-err">❌ Chưa cài Bot Token! Vào Cài đặt để thêm.</div>
+{% elif broadcast_sent %}
+<div class="alert alert-ok">✅ Đã gửi! Thành công: <strong>{{ sent_ok }}</strong> — Thất bại: {{ sent_fail }}</div>
+{% endif %}
+
+<div class="grid-2">
+  <div class="card">
+    <h3>✍️ Soạn thông báo</h3>
+    <form method="POST" action="/admin/broadcast/send">
+      <div class="form-group">
+        <label>Nội dung thông báo</label>
+        <textarea name="message" rows="6" placeholder="Nhập nội dung thông báo gửi tới tất cả users..." required></textarea>
+        <div class="hint">Hỗ trợ HTML Telegram: &lt;b&gt;đậm&lt;/b&gt;, &lt;i&gt;nghiêng&lt;/i&gt;, &lt;u&gt;gạch&lt;/u&gt;, &lt;code&gt;code&lt;/code&gt;, &lt;a href="..."&gt;link&lt;/a&gt;</div>
+      </div>
+      <button class="btn btn-primary" type="submit" style="width:100%">📢 Gửi broadcast</button>
+    </form>
+  </div>
+
+  <div class="card">
+    <h3>💡 Gợi ý nội dung</h3>
+    <p style="color:var(--mut);font-size:13px;line-height:1.8">
+      <strong style="color:var(--fg)">Thông báo bảo trì:</strong><br>
+      🔧 Bot tạm dừng bảo trì từ 22:00 - 23:00 tối nay. Xin lỗi vì sự bất tiện!<br><br>
+      <strong style="color:var(--fg)">Thông báo tính năng mới:</strong><br>
+      🎉 Đã thêm tính năng mới! Dùng /help để xem chi tiết.<br><br>
+      <strong style="color:var(--fg)">Reset giới hạn:</strong><br>
+      ⭐ Giới hạn buff hôm nay đã được reset! Vào buff tiếp nhé.
+    </p>
+  </div>
+</div>
+
+<div class="card">
+  <h3>📋 Lịch sử broadcast</h3>
+  {% if history %}
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Nội dung</th><th>Thành công</th><th>Thất bại</th><th>Thời gian</th></tr>
+      </thead>
+      <tbody>
+        {% for b in history %}
+        <tr>
+          <td style="max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ b.message[:80] }}{% if b.message|length > 80 %}…{% endif %}</td>
+          <td><span class="badge badge-ok">✓ {{ b.sent_count }}</span></td>
+          <td>{% if b.failed_count > 0 %}<span class="badge badge-err">✗ {{ b.failed_count }}</span>{% else %}<span style="color:var(--mut)">0</span>{% endif %}</td>
+          <td style="color:var(--mut);font-size:12px">{{ b.created_at[:16] }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p style="color:var(--mut);text-align:center;padding:20px">Chưa có broadcast nào.</p>
+  {% endif %}
+</div>
+{% endblock %}

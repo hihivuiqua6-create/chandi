@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Đăng nhập Admin — Buff Bot</title>
+<style>
+:root{--bg:#0b0f1a;--card:#1a2235;--fg:#e2e8f0;--mut:#64748b;--pri:#6366f1;--pri2:#818cf8;--err:#ef4444;--bd:#1e293b}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--fg);min-height:100vh;display:flex;align-items:center;justify-content:center}
+.login-box{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:36px 32px;width:100%;max-width:380px}
+.login-logo{text-align:center;margin-bottom:28px}
+.login-logo h1{font-size:24px;font-weight:800}
+.login-logo p{color:var(--mut);font-size:13px;margin-top:5px}
+.form-group{margin-bottom:16px}
+.form-group label{display:block;font-size:12px;font-weight:600;color:var(--mut);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em}
+.form-group input{width:100%;background:#0f1729;color:var(--fg);border:1px solid var(--bd);border-radius:8px;padding:11px 14px;font-size:14px;outline:none;transition:border-color .15s}
+.form-group input:focus{border-color:var(--pri)}
+.btn{width:100%;background:var(--pri);color:#fff;border:none;border-radius:8px;padding:12px;font-size:14px;font-weight:600;cursor:pointer;transition:background .15s;margin-top:4px}
+.btn:hover{background:var(--pri2)}
+.err{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:var(--err);padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:16px;text-align:center}
+</style>
+</head>
+<body>
+<div class="login-box">
+  <div class="login-logo">
+    <h1>⚡ Buff Bot</h1>
+    <p>Admin Control Panel</p>
+  </div>
+  {% if err %}
+  <div class="err">{{ err }}</div>
+  {% endif %}
+  <form method="POST" action="/admin/login">
+    <div class="form-group">
+      <label>Mật khẩu</label>
+      <input type="password" name="password" placeholder="Nhập mật khẩu admin" autofocus required/>
+    </div>
+    <button class="btn" type="submit">🔐 Đăng nhập</button>
+  </form>
+</div>
+</body>
+</html>
